@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>i:HTL img</title>
+
+<style>
+body{ background-image:url(img/Hintergrund.png); }
+#canvas_container{ width:575px; margin: 20px auto; }
+#myCanvas{ background:#FFF; border:#999 1px solid; }
+</style>
+
+<script>
+
+// Variablen angelegt
+var x=270;
+var y=650;
+var y1=-1280;
+var y2=0;
+var width=78;
+var height=160;
+var y_enemy=-200;
+var x_enemy=23;
+var y_enemy_turned=-200;
+var x_enemy_turned=263;
+var y_enemy_turned2=-800;
+var x_enemy_turned2=370;
+var score = 0;
+var highscore = 0;
+var gameover = false;
+var restart = false;
+var Hintergrundmusik;
+var Game_Over_Sound;
+var Bump;
+var Highscore_Sound;
+
+
+function drawAll()	// Alles Bilder werden gezeichnet
+{
+	var ele = document.getElementById("myCanvas");
+	var ctx = ele.getContext("2d");
+	
+	ele.width = ele.width; // clear everything!
+	
+	if(restart == true) {	//nach 'Tod' wird alles wieder auf ihre Anfangsposition gesetzt
+	
+		x=270;
+		y=650;
+		y_enemy=-200;
+		x_enemy=23;
+		y_enemy_turned=-200;
+		x_enemy_turned=263;
+		y_enemy_turned2=-800;
+		x_enemy_turned2=370;
+		
+		restart = false;
+		
+	}
+	
+	//draw road
+	var img = document.getElementById("road");
+	ctx.drawImage(img, 0, y1, 480, 1280);
+	
+	y1 += 2.5;
+	
+    if (y1 > 1280) { 
+      y1 = -1280;
+	  
+    }
+	
+	//draw road2
+	var img = document.getElementById("road2");
+	ctx.drawImage(img, 0, y2, 480, 1290);
+	
+	y2 += 2.5;
+	
+    if (y2 > 1280) {
+      y2 = -1280;
+    }
+	
+	
+	// draw car
+	var img = document.getElementById("car");
+	ctx.drawImage(img, x, y, width,height);
+	
+	// draw enemycar
+	var img = document.getElementById("enemycar");
+	ctx.drawImage(img, x_enemy, y_enemy, 78, 160)
+	
+	y_enemy += 3;
+	
+	if(y_enemy > 1200) {
+	
+		y_enemy = -300;
+		x_enemy = Math.floor(Math.random() * (241-78)) +  1;
+		
+	}
+
+	
+	// draw enemycar_turned
+	var img = document.getElementById("enemycar_turned");
+	ctx.drawImage(img, x_enemy_turned, y_enemy_turned, 78, 160)
+	
+	y_enemy_turned +=1;
+	
+	if(y_enemy_turned > 1100) {
+		y_enemy_turned = -200;
+		x_enemy_turned = Math.floor(Math.random() * 180) + 241;
+	}
+	
+	// draw enemycar_turned2
+	var img = document.getElementById("enemycar_turned2");
+	ctx.drawImage(img, x_enemy_turned2, y_enemy_turned2, 78, 160)
+	
+	y_enemy_turned2 +=1;
+	
+	if(y_enemy_turned2 > 1100) {
+		y_enemy_turned2 = -200;
+		x_enemy_turned2 = Math.floor(Math.random() * 180) + 241;
+	}
+	
+	// draw Score Background
+	
+	var img = document.getElementById("Score_Background");
+	ctx.drawImage(img,0,0,480, 25);
+	
+	// draw Score
+	ctx.fillStyle = "white";
+	ctx.font = "20px Arial"
+	ctx.fillText("Score: " + Math.floor(score), 10,19);
+	
+	//draw Highscore
+	ctx.fillStyle = "white";
+	ctx.font = "20px Arial"
+	ctx.fillText("High-Score: " + Math.floor(highscore), 320,19);
+	
+
+}
+
+function Crash() {
+
+//enemy_car crashes with car
+	if(x>=x_enemy && x<=x_enemy+60 && y>=y_enemy &&  y<=y_enemy+150){ // Es wird überprüft, ob alle vier Ecken ein anderes Auto berühren oder nicht
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x+60>=x_enemy && x+60<=x_enemy+60 && y+150>=y_enemy &&  y+150<=y_enemy+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x+60>=x_enemy && x+60<=x_enemy+60 && y>=y_enemy &&  y<=y_enemy+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x>=x_enemy && x<=x_enemy+60 && y+150>=y_enemy &&  y+150<=y_enemy+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+//enemy_car_returned crashes with car
+
+	if(x>=x_enemy_turned && x<=x_enemy_turned+60 && y>=y_enemy_turned &&  y<=y_enemy_turned+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x+60>=x_enemy_turned && x+60<=x_enemy_turned+60 && y+150>=y_enemy_turned &&  y+150<=y_enemy_turned+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x+60>=x_enemy_turned && x+60<=x_enemy_turned+60 && y>=y_enemy_turned &&  y<=y_enemy_turned+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x>=x_enemy_turned && x<=x_enemy_turned+60 && y+150>=y_enemy_turned &&  y+150<=y_enemy_turned+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+
+//enemy_car_turned2 crashes with car
+
+	if(x>=x_enemy_turned2 && x<=x_enemy_turned2+60 && y>=y_enemy_turned2 &&  y<=y_enemy_turned2+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x+60>=x_enemy_turned2 && x+60<=x_enemy_turned2+60 && y+150>=y_enemy_turned2 &&  y+150<=y_enemy_turned2+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x+60>=x_enemy_turned2 && x+60<=x_enemy_turned2+60 && y>=y_enemy_turned2 &&  y<=y_enemy_turned2+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}
+	
+	if(x>=x_enemy_turned2 && x<=x_enemy_turned2+60 && y+150>=y_enemy_turned2 &&  y+150<=y_enemy_turned2+150){
+	
+		gameover = true;
+		
+		Game_Stop();
+	}	
+
+	
+}
+
+function Game_Stop() { //Nach einer Kollision wird diese Funktion ausgeführt
+
+	var ele = document.getElementById("myCanvas");
+	var ctx = ele.getContext("2d");
+
+	
+	Hintergrundmusik.pause(); //Musik stoppt
+	
+	
+	if(score > highscore) { //Wenn der Score größer als der Highscore ist wird er ersetzt
+	
+		highscore = score;
+		
+		var img = document.getElementById("Highscore");
+		ctx.drawImage(img, 20, 300 , 440, 220)
+		
+		Highscore_Sound = document.getElementById("Highscore_Sound") 
+	
+		Highscore_Sound.play();
+		Highscore_Sound.volume = 0.1;
+		
+	
+	}else if(score < highscore){ //Game Over wenn man nicht den neuen Highscore erreicht hat
+	
+		var img = document.getElementById("Crash_Screen");
+		ctx.drawImage(img, 20, 300 , 440, 220)
+		
+		Game_Over_Sound = document.getElementById("Game_Over_Sound")
+	
+		Game_Over_Sound.play();
+		Game_Over_Sound.volume = 0.1;
+	
+		Bump = document.getElementById("Bump")
+	
+		Bump.play();
+		Bump.volume = 0.1;
+		
+	}
+	
+
+}
+
+function functimer(){
+
+	var ele = document.getElementById("myCanvas");
+	
+	if(gameover == false) { //stoppt alles,  wenn man kollidiert
+		drawAll();
+		Crash();
+	}	
+	
+	score = score + 0.1;  //score zählt hoch
+	
+	requestAnimationFrame(functimer); // draw everything BEFORE screen update
+	
+}
+
+function f_keypress(e){ //Keypress funktion ist da, damit wir unser Auto steuern können
+
+	console.log('key press:' + e.code);
+	if (e.code == "KeyA")
+		x -= 5; 
+	else if (e.code == "KeyD"){
+		x += 5; 
+	}else if (e.code == "KeyW"){
+		y -= 5; 
+	}else if (e.code == "KeyS"){
+		y += 5; 
+	}else if (e.code == "Enter") {
+	
+		restart = true;
+		
+		drawAll();
+	
+		gameover = false;
+		
+		Hintergrundmusik.play();
+		
+		score = 0;
+		
+	}
+}
+
+function start() {
+	
+    var c = document.getElementById("myCanvas");
+	c.setAttribute('tabindex','0');
+	c.focus();
+	c.addEventListener('keypress', f_keypress	, false);
+	
+	drawAll();
+	
+	Hintergrundmusik = document.getElementById('Hintergrundmusik'); 
+
+    Hintergrundmusik.play(); //spielt eine Musik ab
+    Hintergrundmusik.loop = true; //lässt die musik wieder von vorne beginnen
+    Hintergrundmusik.volume = 0.05;
+	
+	requestAnimationFrame(functimer); // draw everything BEFORE screen update
+	
+}
+
+
+
+</script>
+</head>
+<body onload="start()">
+
+<img id="car" src="img/player.png" style="display:none;">
+<img id="car" src="img/player.png" style="display:none;">
+<img id="road" src="img/road.png" style="display:none;">
+<img id="enemycar" src="img/enemycar.png" style="display:none;">
+<img id="road2" src="img/road_2.png" style="display:none;">
+<img id="enemycar_turned" src="img/enemycar_turned.png" style="display:none;">
+<img id="enemycar_turned2" src="img/enemycar_turned2.png" style="display:none;">
+<img id="Crash_Screen" src="img/Crash_Screen.png" style="display:none;">
+<img id="Score_Background" src="img/Score_Background.png" style="display:none;">
+<img id="Highscore" src="img/Highscore.png" style="display:none;">
+<audio id="Hintergrundmusik" src="audio/Background_Music.mp3">
+</audio>
+<audio id="Game_Over_Sound" src="audio/Game_Over_Sound.mp3">
+</audio>
+<audio id="Bump" src="audio/Bump.mp3">
+</audio>
+<audio id="Highscore_Sound" src="audio/Highscore_Sound.mp3">
+</audio>
+
+
+<h1></h1>
+<div id="canvas_container">
+
+<canvas id="myCanvas" width="480" height="890"></canvas>
+
+</div>
+
+</body>
+</html>
